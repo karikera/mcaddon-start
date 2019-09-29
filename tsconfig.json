@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "strictNullChecks": true,
+        "alwaysStrict": true,
+        "noImplicitThis": true,
+        "suppressImplicitAnyIndexErrors": false,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "outDir": "bin",
+        "sourceMap": true,
+        "lib": ["es6"],
+        "target": "es6"
+    },
+    "include": ["src"]
+}

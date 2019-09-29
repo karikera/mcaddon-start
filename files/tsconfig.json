@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "strictNullChecks": true,
+        "alwaysStrict": true,
+        "noImplicitThis": true,
+        "suppressImplicitAnyIndexErrors": false,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "outDir": "bin",
+        "sourceMap": true,
+        "lib": ["esnext"],
+        "target": "esnext"
+    }
+}

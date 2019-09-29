@@ -1,0 +1,17 @@
+{
+    "format_version": 1,
+    "header": {
+        "name": "{{name}}",
+        "description": "{{name}} // Powered by mcaddon-start",
+        "uuid": "{{uuid}}",
+        "version": [0, 0, 1]
+    },
+    "modules": [
+        {
+            "type": "data",
+            "description": "{{name}} Data",
+            "uuid": "{{uuid}}",
+            "version": [0, 0, 1]
+        }
+    ]
+}
