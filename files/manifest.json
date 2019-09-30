@@ -10,7 +10,7 @@
         {
             "type": "data",
             "description": "{{name}} Data",
-            "uuid": "{{uuid}}",
+            "uuid": "{{data_uuid}}",
             "version": [0, 0, 1]
         }
     ]

@@ -152,6 +152,7 @@ async function main():Promise<void>
     templateCopy(path.join(__dirname, '../files/manifest.json'), `outlink/manifest.json`, {
         name:packname,
         uuid:generateUuid(),
+        data_uuid:generateUuid(),
     });
     mkdirRecursive('src/server');
     fs.copyFileSync(path.join(__dirname, '../files/server/index.ts'), 'src/server/index.ts');
