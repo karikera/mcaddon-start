@@ -1,4 +1,4 @@
-/// <reference path="../../node_modules/minecraft-scripting-types-server/index.d.ts" />
+/// <reference types="minecraft-scripting-types-server" />
 
 const system = server.registerSystem(0, 0);
 

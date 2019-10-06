@@ -21,5 +21,3 @@ Open generated directory with VSCode
 And press `Ctrl + Shift + B` to build  
 You can modify script in `src/server/index.ts`  
 It recommends to install [Typescript + Webpack Problem Matchers](https://marketplace.visualstudio.com/items?itemName=eamodio.tsl-problem-matcher)
-
-### index.ts
