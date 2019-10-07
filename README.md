@@ -12,7 +12,7 @@ You can open terminal with `Windows key -> cmd -> Enter`
 ```sh
 cd C:\path\to\projects ## Move to projects directory
 
-npm install -g mcaddon-start  ## install mcaddon-start
+npm i -g mcaddon-start  ## install mcaddon-start
 
 mcaddon-start [project name]
 ## It will generate project directory and behavior pack with mcaddon-start

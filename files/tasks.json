@@ -6,8 +6,8 @@
         {
             "label": "Watch {{name}}",
             "type": "shell",
-            "command": "webpack",
-            "problemMatcher":"$ts-webpack-watch",
+            "command": "webpack",/*<<<!javascript*/
+            "problemMatcher":"$ts-webpack-watch",/*>>>*/
             "args": [
                 "-w"
             ],

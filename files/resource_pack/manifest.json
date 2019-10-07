@@ -1,0 +1,24 @@
+{
+	"format_version": 1,
+	"header": {
+		"name": "{{name}}",
+		"description": "{{name}} // Powered by mcaddon-start",
+		"uuid": "{{rp_uuid}}",
+		"version": [0, 0, 1]
+	},
+	"modules": [
+		{
+			"type": "resources",
+			"description": "{{name}} Resource",
+			"uuid": "{{resources_uuid}}",
+			"version": [0, 0, 1]
+		}
+	],
+	"metadata": {
+		"authors": ["author"],
+		"url": "about:blank"
+	}/*<<<ui*/,
+	"capabilities": [
+		"experimental_custom_ui"
+	]/*>>>*/
+}

@@ -1,0 +1,19 @@
+{
+    "name": "{{packname}}",
+    "version": "0.0.1",
+    "description": "{{packname}} package description",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "webpack": "^4.39.3",
+        "webpack-cli": "^3.3.9",/*<<<!javascript*/
+        "ts-loader": "^6.0.4",
+        "typescript": "^3.6.2",/*>>>*/
+        "minecraft-scripting-types-server": "^1.0.0"/*<<<client*/,
+        "minecraft-scripting-types-client": "^1.0.0"/*>>>*/
+    }
+}

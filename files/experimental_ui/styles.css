@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'MinecraftTen';
+    src: url(fonts/MinecraftTen.otf);
+}
+
+* {
+    font-family: "MinecraftTen";
+}

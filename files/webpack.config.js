@@ -6,7 +6,7 @@ function devtoolModuleFilenameTemplate(info)
 	return info.absoluteResourcePath;
 }
 
-module.exports = {
+module.exports = {/*<<<!javascript*/
     module: {
         rules: [
             {
@@ -15,22 +15,19 @@ module.exports = {
                 exclude: /node_modules/
             }
         ]
-    },
-    externals: {
-        'original-fs': 'fs'
-    },
+    },/*>>>*/
     resolve: {
-        extensions: ['.tsx', '.ts', '.js']
+        extensions: [/*<<<!javascript*/'.ts', /*>>>*/'.js']
     },
     mode: 'development',
     devtool: 'source-map',
     entry: {
-        'server': './src/server/index.ts',
-        // 'client': './src/client/index.ts'
+        'server': './src/server/index.{{ext}}'/*<<<client*/,
+        'client': './src/client/index.{{ext}}'/*>>>*/
     },
     output: {
         devtoolModuleFilenameTemplate,
         filename: '[name]/script.dist.js',
-        path: path.resolve(__dirname, 'outlink/scripts')
+        path: path.resolve(__dirname, 'behavior_pack_link/scripts')
     }
 };

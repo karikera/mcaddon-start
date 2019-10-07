@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "mcaddon-start",
             "program": "${workspaceFolder}\\bin\\bin.js",
-            "args": ["-f", "mcas-test"],
+            "args": ["-f", "mcas-test", "-c1", "-r2", "-l0"],
             "console": "integratedTerminal"
         }
     ]

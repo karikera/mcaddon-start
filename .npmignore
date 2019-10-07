@@ -1,3 +1,6 @@
 /mcas-test
 /src
 /bin/*.js.map
+/pack_icon.psd
+/.eslintrc.json
+/tsconfig.json
