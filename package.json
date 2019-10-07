@@ -21,6 +21,7 @@
     "minecraft-scripting-types-client": "^1.0.0",
     "minecraft-scripting-types-server": "^1.0.0",
     "ncp": "^2.0.0",
+    "rimraf": "^3.0.0",
     "source-map-support": "^0.5.13",
     "uuid": "^3.3.3",
     "valid-filename": "^3.1.0"
@@ -30,6 +31,7 @@
     "@types/inquirer": "^6.5.0",
     "@types/ncp": "^2.0.1",
     "@types/node": "^12.7.11",
+    "@types/rimraf": "^2.0.2",
     "@types/uuid": "^3.4.5",
     "@typescript-eslint/eslint-plugin": "^2.3.3",
     "@typescript-eslint/parser": "^2.3.3",

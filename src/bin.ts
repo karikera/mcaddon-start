@@ -6,6 +6,7 @@ import cp = require('child_process');
 import path = require('path');
 import validFilename = require('valid-filename');
 import generateUuid = require('uuid/v1');
+import rimraf = require('rimraf');
 import { ncp } from 'ncp';
 import { Questions } from './questions';
 import AdmZip = require('adm-zip');
@@ -151,13 +152,26 @@ const questions = new Questions;
 
 async function main():Promise<void>
 {
+    const minepath = `${process.env.USERPROFILE}\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang`;
+    let win10Exists = fs.existsSync(minepath);
+
+    const behavior_packs = `${minepath}\\development_behavior_packs`;
+    const resource_packs = `${minepath}\\development_resource_packs`;
+
+    if (win10Exists)
+    {
+        mkdir(behavior_packs);            
+        mkdir(resource_packs);
+    }
+
     if (process.argv[2] === 'zip')
     {
         const src = process.argv[3];
         const dest = process.argv[4];
         if (!src || !dest)
         {
-            console.error('It needs a zip path\nmcaddon-start zip [src] [dest]');
+            console.error('It needs a zip path');
+            console.error('mcaddon-start zip [src] [dest]');
             return;
         }
                 
@@ -166,13 +180,40 @@ async function main():Promise<void>
         zip.writeZip(dest);
         return;
     }
+    else if (process.argv[2] === 'remove')
+    {
+        if (!win10Exists)
+        {
+            console.error('Minecraft Windows 10 Edition not found');
+            return;
+        }
+        for (;;)
+        {
+            const list1 = fs.readdirSync(behavior_packs).map(v=>'(behavior)'+v);
+            const list2 = fs.readdirSync(resource_packs).map(v=>'(resource)'+v);
+            const files = list1.concat(list2).concat(['exit']);
 
-    
-    const minepath = `${process.env.USERPROFILE}\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang`;
-    let win10Exists = fs.existsSync(minepath);
-    let useClientScript:number|null = null;
-    let useResourcePack:number|null = null;
-    let useJavascript:number|null = null;
+            const selected = await questions.select('Select to remove>', null, ...list1.concat(list2).concat(['exit']));
+            const file = files[selected];
+            if (file === 'exit') break;
+            const dirname = file.substr(10);
+            try
+            {
+                switch (file.substr(0, 10))
+                {
+                case '(behavior)': rimraf.sync(path.join(behavior_packs, dirname)); break;
+                case '(resource)': rimraf.sync(path.join(resource_packs, dirname)); break;
+                }
+                console.log(`${file} is removed`);
+            }
+            catch (err)
+            {
+                console.error(`${file} removing failed`);
+                console.error(err.message);
+            }
+        }
+        return;
+    }
 
     if (!win10Exists)
     {
@@ -183,6 +224,11 @@ async function main():Promise<void>
     {
         console.log('It will generate project directory and behavior pack');
     }
+
+    
+    let useClientScript:number|null = null;
+    let useResourcePack:number|null = null;
+    let useJavascript:number|null = null;
 
     let force = false;
     let packname = '';
@@ -235,15 +281,16 @@ async function main():Promise<void>
 
     if (win10Exists)
     {
-        const behavior_packs = `${minepath}\\development_behavior_packs`;
-        mkdir(behavior_packs);
-
         behavior_pack_path = `${behavior_packs}\\${packname}`;
         if (!force && fs.existsSync(behavior_pack_path))
         {
             console.error(`behavior pack ${packname} exists already.`);
             return;
         }
+    }
+    else
+    {
+        behavior_pack_path = 'behavior_pack';
     }
 
     if (!force && fs.existsSync(packname))
@@ -264,14 +311,18 @@ async function main():Promise<void>
 
     if (useResourcePack)
     {
-        const resource_packs = `${minepath}\\development_resource_packs`;
-        mkdir(resource_packs);
-        
-        resource_pack_path = `${resource_packs}\\${packname}`;
-        if (!force && fs.existsSync(resource_pack_path))
+        if (win10Exists)
         {
-            console.error(`resource pack ${packname} exists already.`);
-            return;
+            resource_pack_path = `${resource_packs}\\${packname}`;
+            if (!force && fs.existsSync(resource_pack_path))
+            {
+                console.error(`resource pack ${packname} exists already.`);
+                return;
+            }
+        }
+        else
+        {
+            resource_pack_path = 'resource_pack';
         }
     }
 
@@ -325,13 +376,14 @@ async function main():Promise<void>
 
     const files = path.join(path.join(__dirname, `../files/`));
     
+    fs.copyFileSync(path.join(files, 'tsconfig.json'), `tsconfig.json`);
+    fs.copyFileSync(path.join(files, '.gitignore'), `.gitignore`);
+
     templateCopy(path.join(files, 'package.json'), `package.json`, {
         javascript:useJavascript,
         client:useClientScript,
     });
     
-    fs.copyFileSync(path.join(files, '../files/tsconfig.json'), `tsconfig.json`);
-
     templateCopy(path.join(files, `webpack.config.js`), `webpack.config.js`, {
         javascript:useJavascript,
         client:useClientScript,

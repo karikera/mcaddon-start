@@ -19,6 +19,14 @@
             "program": "${workspaceFolder}\\bin\\bin.js",
             "args": ["-f", "mcas-test", "-c1", "-r2", "-l0"],
             "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Remove",
+            "program": "${workspaceFolder}\\bin\\bin.js",
+            "args": ["remove"],
+            "console": "integratedTerminal"
         }
     ]
 }
