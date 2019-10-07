@@ -378,7 +378,7 @@ async function main():Promise<void>
     const files = path.join(path.join(__dirname, `../files/`));
     
     fs.copyFileSync(path.join(files, 'tsconfig.json'), `tsconfig.json`);
-    fs.copyFileSync(path.join(files, '.gitignore'), `.gitignore`);
+    fs.copyFileSync(path.join(files, 'gitignore'), `.gitignore`);
 
     templateCopy(path.join(files, 'package.json'), `package.json`, {
         javascript:useJavascript,
