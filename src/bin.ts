@@ -224,6 +224,7 @@ async function main():Promise<void>
     {
         console.log('It will generate project directory and behavior pack');
     }
+    console.log('');
 
     
     let useClientScript:number|null = null;
