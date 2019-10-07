@@ -6,8 +6,11 @@ import cp = require('child_process');
 import path = require('path');
 import validFilename = require('valid-filename');
 import generateUuid = require('uuid/v1');
-import cliSelect = require('cli-select');
 import { ncp } from 'ncp';
+import { Questions } from './questions';
+import AdmZip = require('adm-zip');
+
+// TODO: want to add make npm module option
 
 function getStdLine():Promise<string>
 {
@@ -142,20 +145,29 @@ function templateCopy(src:string, dest:string, vars:{[key:string]:(string|boolea
     fs.writeFileSync(dest, parser.out, 'utf-8');
 }
 
-async function select(preselect:number|null,...values:string[]):Promise<number>
-{
-    if (preselect !== null)
-    {
-        console.log(values[preselect]);
-        return preselect;
-    }
-    const res = await cliSelect({defaultValue:0, values});
-    console.log(res.value);
-    return res.id as number;
-}
+
+const questions = new Questions;
+
 
 async function main():Promise<void>
 {
+    if (process.argv[2] === 'zip')
+    {
+        const src = process.argv[3];
+        const dest = process.argv[4];
+        if (!src || !dest)
+        {
+            console.error('It needs a zip path\nmcaddon-start zip [src] [dest]');
+            return;
+        }
+                
+        const zip = new AdmZip();
+        zip.addLocalFolder(src);
+        zip.writeZip(dest);
+        return;
+    }
+
+    
     const minepath = `${process.env.USERPROFILE}\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang`;
     let win10Exists = fs.existsSync(minepath);
     let useClientScript:number|null = null;
@@ -240,8 +252,9 @@ async function main():Promise<void>
         return;
     }
 
-    console.log('(1/3)Resource pack>');
-    useResourcePack = await select(
+
+    useResourcePack = await questions.select(
+        '(1/3) Resource pack>',
         useResourcePack,
         'No Resource Pack',
         'Generate Resource Pack',
@@ -262,8 +275,8 @@ async function main():Promise<void>
         }
     }
 
-    console.log('(2/3)Please select language>');
-    useJavascript = await select(
+    useJavascript = await questions.select(
+        '(2/3) Please select language>',
         useJavascript,
         'TypeScript(Recommended)',
         'JavaScript'
@@ -271,15 +284,13 @@ async function main():Promise<void>
 
     const ext = useJavascript ? 'js' : 'ts';
     
-    console.log('(3/3)Please select target>');
-    useClientScript = await select(
+    useClientScript = await questions.select(
+        '(3/3) Please select target>',
         useClientScript,
         'Server Script Only',
         'Server Script + Client Script'
     );
     
-    console.log('generating...');
-
     mkdir(packname);
     process.chdir(packname);
     mkdir('.vscode');
@@ -291,7 +302,7 @@ async function main():Promise<void>
             mkdir(resource_pack_path);
             try
             {
-                cp.execSync(`mklink /J "resource_pack_link" "${resource_pack_path}"`, {stdio:'pipe'});
+                cp.execSync(`mklink /J "resource_pack_link" "${resource_pack_path}"`, {stdio:'ignore'});
             }
             catch(err)
             {
@@ -300,7 +311,7 @@ async function main():Promise<void>
         try
         {
             mkdir(behavior_pack_path);
-            cp.execSync(`mklink /J "behavior_pack_link" "${behavior_pack_path}"`, {stdio:'pipe'});
+            cp.execSync(`mklink /J "behavior_pack_link" "${behavior_pack_path}"`, {stdio:'ignore'});
         }
         catch(err)
         {
@@ -383,10 +394,11 @@ async function main():Promise<void>
     });
     fs.copyFileSync(path.join(files, 'README.md'), 'README.md');
     
-    cp.execSync(`npm install`, {stdio:'pipe'});
-    console.log('Generated Project: '+process.cwd());
-    if (behavior_pack_path) console.log('Generated Behavior Pack: '+behavior_pack_path);
-    if (resource_pack_path) console.log('Generated Resource Pack: '+resource_pack_path);
+    console.log(`npm install`);
+    cp.execSync(`npm install`, {stdio:'inherit'});
+    console.log('Project Path:  '+process.cwd());
+    if (behavior_pack_path) console.log('Behavior Pack: '+behavior_pack_path);
+    if (resource_pack_path) console.log('Resource Pack: '+resource_pack_path);
 
     cp.exec('code .', err=>{});
 }

@@ -17,7 +17,8 @@ function message(msg)
 // event on hit result changed
 system.listenForEvent("minecraft:hit_result_changed", (data)=>{
     const entity = data.data.entity;
-    message('EntityCreated: '+entity.__identifier__); // display message with entity identifier
+    if (!entity) return;
+    message('EntityHitResult: '+entity.__identifier__); // display message with entity identifier
 });
 /*<<<ui*/
 system.listenForEvent("minecraft:ui_event", ev=>{

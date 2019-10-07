@@ -4,17 +4,28 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Watch {{name}}",
+            "label": "Watch",
             "type": "shell",
-            "command": "webpack",/*<<<!javascript*/
+            "command": "node_modules\\.bin\\webpack",/*<<<!javascript*/
             "problemMatcher":"$ts-webpack-watch",/*>>>*/
             "args": [
                 "-w"
             ],
-            "group": {
-                "isDefault": true,
-                "kind": "build"
-            }
+            "group": "build"
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "node_modules\\.bin\\webpack",/*<<<!javascript*/
+            "problemMatcher":"$ts-webpack",/*>>>*/
+            "group": "build"
+        },
+        {
+            "label": "Build & Zip to .mcaddon",
+            "type": "shell",
+            "command": "node_modules\\.bin\\webpack && mcaddon-start zip behavior_pack_link \"dist/{{name}}.mcaddon\"",
+            "problemMatcher":"$ts-webpack",
+            "group": "build"
         }
     ]
 }

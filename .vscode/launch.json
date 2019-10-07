@@ -7,7 +7,15 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "mcaddon-start",
+            "name": "Launch",
+            "program": "${workspaceFolder}\\bin\\bin.js",
+            "args": ["-f", "mcas-test"],
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Without Selections",
             "program": "${workspaceFolder}\\bin\\bin.js",
             "args": ["-f", "mcas-test", "-c1", "-r2", "-l0"],
             "console": "integratedTerminal"

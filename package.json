@@ -1,6 +1,6 @@
 {
   "name": "mcaddon-start",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Minecraft Addon Project Generator with Webpack + Typescript",
   "bin": "bin/bin.js",
   "scripts": {
@@ -16,11 +16,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/ncp": "^2.0.1",
-    "@types/node": "^12.7.5",
-    "@types/npm": "^2.0.30",
-    "@types/uuid": "^3.4.5",
-    "cli-select": "^1.1.0",
+    "adm-zip": "^0.4.13",
+    "inquirer": "^7.0.0",
     "minecraft-scripting-types-client": "^1.0.0",
     "minecraft-scripting-types-server": "^1.0.0",
     "ncp": "^2.0.0",
@@ -29,8 +26,13 @@
     "valid-filename": "^3.1.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.3.2",
-    "@typescript-eslint/parser": "^2.3.2",
+    "@types/adm-zip": "^0.4.32",
+    "@types/inquirer": "^6.5.0",
+    "@types/ncp": "^2.0.1",
+    "@types/node": "^12.7.11",
+    "@types/uuid": "^3.4.5",
+    "@typescript-eslint/eslint-plugin": "^2.3.3",
+    "@typescript-eslint/parser": "^2.3.3",
     "eslint": "^6.5.1",
     "typescript": "^3.6.3"
   }

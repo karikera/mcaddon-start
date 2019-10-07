@@ -19,7 +19,8 @@ function message(msg:string):void
 // event on hit result changed
 system.listenForEvent(ReceiveFromMinecraftClient.HitResultChanged, (data)=>{
     const entity = data.data.entity;
-    message('EntityCreated: '+entity.__identifier__); // display message with entity identifier
+    if (!entity) return;
+    message('EntityHitResult: '+entity.__identifier__); // display message with entity identifier
 });
 /*<<<ui*/
 system.listenForEvent(ReceiveFromMinecraftClient.UIEvent, ev=>{
@@ -27,14 +28,14 @@ system.listenForEvent(ReceiveFromMinecraftClient.UIEvent, ev=>{
     if (ev.data === 'startPressed')
     {
         const data = system.createEventData(SendToMinecraftClient.UnloadUI);
-        data!.data.path = 'test.html';
+        data!.data.path = 'sample.html';
         system.broadcastEvent(SendToMinecraftClient.UnloadUI, data!);
     }
 });
 
 system.listenForEvent(ReceiveFromMinecraftClient.ClientEnteredWorld, ev=>{
     const data = system.createEventData(SendToMinecraftClient.LoadUI);
-    data!.data.path = 'test.html';
+    data!.data.path = 'sample.html';
     system.broadcastEvent(SendToMinecraftClient.LoadUI, data!);
 });
 /*>>>*/

@@ -18,6 +18,6 @@ mcaddon-start [project name]
 ## It will generate project directory and behavior pack with mcaddon-start
 ```
 Open generated directory with VSCode  
-And press `Ctrl + Shift + B` to build  
+And press `Ctrl + Shift + B` and select `Watch` to auto build  
 You can modify script in `src/server/index.ts`  
 It recommends to install [Typescript + Webpack Problem Matchers](https://marketplace.visualstudio.com/items?itemName=eamodio.tsl-problem-matcher)
