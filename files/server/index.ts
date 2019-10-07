@@ -1,6 +1,8 @@
 /// <reference types="minecraft-scripting-types-server" />
 
+/*<<<client*/
 export {}; // nothing, avoid to use global scope without import anything
+/*>>>*/
 
 const system = server.registerSystem(0, 0);
 

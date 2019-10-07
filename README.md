@@ -5,7 +5,9 @@ This is Minecraft Addon project generator with **Webpack + Typescript**
 ## How to Use
 It can run on windows 10 only with Minecraft Win10 Edition  
 
-First You need to install [VSCode](https://code.visualstudio.com/) and [NodeJS](https://nodejs.org/en/)
+You need to install [VSCode](https://code.visualstudio.com/) and [NodeJS](https://nodejs.org/en/)
+
+![alt text](readme-image/render.gif)
 
 ### Terminal process
 You can open terminal with `Windows key -> cmd -> Enter` 
@@ -17,6 +19,7 @@ npm i -g mcaddon-start  ## install mcaddon-start
 mcaddon-start [project name]
 ## It will generate project directory and behavior pack with mcaddon-start
 ```
+
 Open generated directory with VSCode  
 And press `Ctrl + Shift + B` and select `Watch` to auto build  
 You can modify script in `src/server/index.ts`  

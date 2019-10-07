@@ -428,7 +428,8 @@ async function main():Promise<void>
     {
         mkdir('src/client');
         templateCopy(path.join(files, `client/index.${ext}`), `src/client/index.${ext}`,{
-            ui:useUI
+            ui:useUI,
+            client:useClientScript,
         });
     }
 
@@ -443,11 +444,12 @@ async function main():Promise<void>
     }
 
     templateCopy(path.join(files, `server/index.${ext}`), `src/server/index.${ext}`,{
-        ui:useUI
+        ui:useUI,
+        client:useClientScript,
     });
     fs.copyFileSync(path.join(files, 'README.md'), 'README.md');
     
-    console.log(`npm install`);
+    console.log(`generating...`);
     cp.execSync(`npm install`, {stdio:'inherit'});
     console.log('Project Path:  '+process.cwd());
     if (behavior_pack_path) console.log('Behavior Pack: '+behavior_pack_path);
