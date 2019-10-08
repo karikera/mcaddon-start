@@ -5,25 +5,22 @@
     "tasks": [
         {
             "label": "Watch",
-            "type": "shell",
-            "command": "node_modules\\.bin\\webpack",/*<<<!javascript*/
+            "type": "npm",
+            "script": "watch",/*<<<!javascript*/
             "problemMatcher":"$ts-webpack-watch",/*>>>*/
-            "args": [
-                "-w"
-            ],
             "group": "build"
         },
         {
             "label": "Build",
-            "type": "shell",
-            "command": "node_modules\\.bin\\webpack",/*<<<!javascript*/
+            "type": "npm",
+            "script": "build",/*<<<!javascript*/
             "problemMatcher":"$ts-webpack",/*>>>*/
             "group": "build"
         },
         {
             "label": "Build & Zip to .mcaddon",
-            "type": "shell",
-            "command": "node_modules\\.bin\\webpack && mcaddon-start zip behavior_pack_link \"dist/{{name}}.mcaddon\"",
+            "type": "npm",
+            "script": "zip",
             "problemMatcher":"$ts-webpack",
             "group": "build"
         }

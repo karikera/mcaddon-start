@@ -1,0 +1,63 @@
+{
+    "questions":{
+        "useResourcePack": "(1/3) 리소스팩 사용>",
+        "useJavascript": "(2/3) 프로그래밍 언어 선택>",
+        "useClientScript": "(3/3) 스크립트 사용 대상 선택>"
+    },
+    "useResourcePack":{
+        "no": "리소스팩 사용 안함",
+        "yes": "리소스팩 사용",
+        "yes_ui": "리소스팩 + UI 사용"
+    },
+    "useClientScript":{
+        "no": "서버 스크립트만",
+        "yes": "서버 스크립트 + 클라이언트 스크립트"
+    },
+    "useJavascript":{
+        "no": "타입스크립트(권장)",
+        "yes": "자바스크립트"
+    },
+    "msg":{
+        "win10": {
+            "no": "마인크래프트 윈10 에디션을 찾지 못했습니다\n프로젝트 디렉토리만 생성됩니다",
+            "yes": "프로젝트 디렉토리를 생성하고, 패키지를 설치합니다"
+        },
+        "putProjectName": "프로젝트 이름>",
+        "invalidFileName": "잘못된 파일 이름: $",
+        "projectAlreadyExists": "$ 디렉토리가 이미 존재합니다",
+        "behaviorPackAlreadyExists": "행동팩 $: 이미 존재합니다",
+        "resourcePackAlreadyExists": "리소스팩 $: 이미 존재합니다",
+        "copyFailed": "복사 실패 $0: $1",
+        "generating": "생성중...",
+        "projectPath": "프로젝트 위치:  ",
+        "behaviorPath": "  행동팩 위치: ",
+        "resourcePath": "리로스팩 위치: "
+    },
+    "script":{
+        "nothingExport": "클라이언트와 system 변수 중복을 피하기 위해 적은 별 의미없는 코드",
+        "function":{
+            "message": {
+                "desc": "채팅을 띄우는 함수",
+                "param":{
+                    "msg": "띄울 메세지"
+                }
+            }
+        },
+        "hit_result_changed": "히트 결과가 바뀌었을 때 이벤트",
+        "hit_result_changed_msg": "엔티티 식별자 출력",
+        "entity_created": "엔티티가 생성되었을 때 이벤트",
+        "entity_created_msg": "엔티티 식별자 출력"
+    },
+    "zip":{
+        "noPath":"압축 파일 위치를 적어주셔야합니다"
+    },
+    "remove":{
+        "win10No": "마인크래프트 윈10 에디션을 찾지 못했습니다",
+        "select":"삭제할 팩>",
+        "behaviorPack": " (행동팩) ",
+        "resourcePack": "(리소스팩)",
+        "exit": "나가기",
+        "succeeded": "$: 삭제 성공",
+        "failed": "$: 삭제 실패"
+    }
+}

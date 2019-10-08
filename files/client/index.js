@@ -3,8 +3,8 @@
 const system = client.registerSystem(0, 0);
 
 /**
- * Display message function
- * @param {string} msg Message to display
+ * {{lang.script.function.message.desc}}
+ * @param msg {{lang.script.function.message.param.msg}}
  */
 function message(msg)
 {
@@ -14,11 +14,11 @@ function message(msg)
     system.broadcastEvent("minecraft:display_chat_event", chat);
 }
 
-// event on hit result changed
+// {{lang.script.hit_result_changed}}
 system.listenForEvent("minecraft:hit_result_changed", (data)=>{
     const entity = data.data.entity;
     if (!entity) return;
-    message('EntityHitResult: '+entity.__identifier__); // display message with entity identifier
+    message('EntityHitResult: '+entity.__identifier__);// {{lang.script.hit_result_changed_msg}}
 });
 /*<<<ui*/
 system.listenForEvent("minecraft:ui_event", ev=>{

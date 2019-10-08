@@ -1,231 +1,100 @@
 #!/usr/bin/env node
 
 require('source-map-support').install();
+import os = require('os');
 import fs = require('fs');
 import cp = require('child_process');
 import path = require('path');
 import validFilename = require('valid-filename');
 import generateUuid = require('uuid/v1');
 import rimraf = require('rimraf');
-import { ncp } from 'ncp';
 import { Questions } from './questions';
 import AdmZip = require('adm-zip');
-
-// TODO: want to add make npm module option
-
-function getStdLine():Promise<string>
-{
-    return new Promise<string>((resolve)=>{
-        function input(data:Buffer):void
-        {
-            process.stdin.removeListener('data', input);
-            process.stdin.pause();
-            resolve(data.toString('utf-8'));
-        }
-        process.stdin.on('data', input);
-    });
-}
-
-function mkdir(path:string):void
-{
-    try
-    {
-        fs.mkdirSync(path);
-    }
-    catch(err)
-    {
-    }
-}
-
-function mkdirRecursive(path:string):void
-{
-    try
-    {
-        fs.mkdirSync(path, {recursive: true});
-    }
-    catch(err)
-    {
-    }
-}
-
-function writeJsonFile(path:string, text:unknown):void
-{
-    fs.writeFileSync(path, JSON.stringify(text, null, 4), 'utf-8');
-}
-
-class TextParser
-{
-    out:string = '';
-    idx:number = 0;
-    content:string = '';
-
-    constructor()
-    {
-    }
-
-    passTo(needle:string):void
-    {
-        const startidx = this.content.indexOf(needle, this.idx);
-        if (startidx === -1)
-        {
-            this.out += this.content.substr(this.idx);
-            throw 0;
-        }
-        this.out += this.content.substring(this.idx, startidx);
-        this.idx = startidx + needle.length;
-    }
-
-    readTo(needle:string):string
-    {
-        const startidx = this.content.indexOf(needle, this.idx);
-        if (startidx === -1)
-        {
-            throw 0;
-        }
-        const res = this.content.substring(this.idx, startidx);
-        this.idx = startidx + needle.length;
-        return res;
-    }
-
-    readBetween(a:string, b:string):string
-    {
-        this.passTo(a);
-        return this.readTo(b);
-    }
-
-
-}
-
-function templateCopy(src:string, dest:string, vars:{[key:string]:(string|boolean|number)}):void
-{
-    const out = fs.createWriteStream(dest, 'utf-8');
-    
-    const parser = new TextParser;
-    parser.content = fs.readFileSync(src, 'utf-8');
-
-    try
-    {
-        for (;;)
-        {
-            const name = parser.readBetween('/*<<<', '*/');
-            let condition:boolean;
-            if (name.startsWith('!'))
-            {
-                condition = !vars[name.substr(1)];
-            }
-            else
-            {
-                condition = !!vars[name];
-            }
-            
-            if (condition) parser.passTo('/*>>>*/');
-            else parser.readTo('/*>>>*/');
-        }
-    }
-    catch (err)
-    {
-        if (err !== 0) throw err;
-    }
-    parser.content = parser.out;
-    parser.out = '';
-    parser.idx = 0;
-    
-    try
-    {
-        for (;;)
-        {
-            const name = parser.readBetween('{{', '}}');
-            parser.out += vars[name];
-        }
-    }
-    catch (err)
-    {
-        if (err !== 0) throw err;
-    }
-
-    fs.writeFileSync(dest, parser.out, 'utf-8');
-}
-
+import { mkdir, mkdirr, getStdLine, templateCopy, copyAll } from './util';
+import { lang, getLocaledFile } from './lang';
 
 const questions = new Questions;
 
+function getMinePath():{behavior_packs:string, resource_packs:string}|null
+{
+    if (os.platform() !== 'win32') return null;
+    const minepath = `${process.env.USERPROFILE}\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang`;
+    if (!fs.existsSync(minepath)) return null;
+    const behavior_packs = `${minepath}\\development_behavior_packs`;
+    const resource_packs = `${minepath}\\development_resource_packs`;
+    mkdir(behavior_packs);            
+    mkdir(resource_packs);
+    return {behavior_packs, resource_packs};
+}
 
 async function main():Promise<void>
 {
-    const minepath = `${process.env.USERPROFILE}\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang`;
-    let win10Exists = fs.existsSync(minepath);
-
-    const behavior_packs = `${minepath}\\development_behavior_packs`;
-    const resource_packs = `${minepath}\\development_resource_packs`;
-
-    if (win10Exists)
-    {
-        mkdir(behavior_packs);            
-        mkdir(resource_packs);
-    }
-
+    const win10path = getMinePath();
     if (process.argv[2] === 'zip')
     {
         const src = process.argv[3];
         const dest = process.argv[4];
         if (!src || !dest)
         {
-            console.error('It needs a zip path');
+            console.error(lang.zip.noPath);
             console.error('mcaddon-start zip [src] [dest]');
             return;
         }
                 
         const zip = new AdmZip();
+        mkdirr(path.dirname(dest));
         zip.addLocalFolder(src);
         zip.writeZip(dest);
         return;
     }
     else if (process.argv[2] === 'remove')
     {
-        if (!win10Exists)
+        if (!win10path)
         {
-            console.error('Minecraft Windows 10 Edition not found');
+            console.error(lang.remove.win10No);
             return;
         }
         for (;;)
         {
-            const list1 = fs.readdirSync(behavior_packs).map(v=>'(behavior)'+v);
-            const list2 = fs.readdirSync(resource_packs).map(v=>'(resource)'+v);
-            const files = list1.concat(list2).concat(['exit']);
+            const bps = fs.readdirSync(win10path.behavior_packs).map(v=>lang.remove.behaviorPack + v);
+            const rps = fs.readdirSync(win10path.resource_packs).map(v=>lang.remove.resourcePack + v);
+            const files = bps.concat(rps).concat([lang.remove.exit.text]);
 
-            const selected = await questions.select('Select to remove>', null, ...list1.concat(list2).concat(['exit']));
+            const selected = await questions.select(lang.remove.select.text, null, ...files);
+            if (selected >= bps.length + rps.length) break;
             const file = files[selected];
-            if (file === 'exit') break;
-            const dirname = file.substr(10);
             try
             {
-                switch (file.substr(0, 10))
+                if (selected >= bps.length)
                 {
-                case '(behavior)': rimraf.sync(path.join(behavior_packs, dirname)); break;
-                case '(resource)': rimraf.sync(path.join(resource_packs, dirname)); break;
+                    const dirname = file.substr(lang.remove.behaviorPack.text.length);
+                    rimraf.sync(path.join(win10path.behavior_packs, dirname));
                 }
-                console.log(`${file} is removed`);
+                else
+                {
+                    const dirname = file.substr(lang.remove.resourcePack.text.length);
+                    rimraf.sync(path.join(win10path.resource_packs, dirname));
+                }
+                console.log(lang.remove.succeeded.format(file));
             }
             catch (err)
             {
-                console.error(`${file} removing failed`);
+                console.error(lang.remove.failed.format(file));
                 console.error(err.message);
             }
         }
         return;
     }
 
-    if (!win10Exists)
+    if (!win10path)
     {
-        console.error('Minecraft Windows 10 Edition not found');
-        console.error('It will generate project directory only');
+        console.log(lang.msg.win10.no.text);
     }
     else
     {
-        console.log('It will generate project directory and behavior pack');
+        console.log(lang.msg.win10.yes.text);
     }
-    console.log('');
-
+    console.log(''); // empty line
     
     let useClientScript:number|null = null;
     let useResourcePack:number|null = null;
@@ -254,7 +123,6 @@ async function main():Promise<void>
                 }
                 else
                 {
-    
                 }
                 break;
             }
@@ -266,88 +134,86 @@ async function main():Promise<void>
     }
     if (!packname)
     {
-        console.log(`Please enter name of project>`);
+        console.log(lang.msg.putProjectName);
         packname = await getStdLine();
     }
 
     if (!validFilename(packname))
     {
-        console.error(`Invalid file name: ${packname}`);
+        console.error(lang.msg.invalidFileName.format(packname));
         return;
     }
 
-    
     let behavior_pack_path = '';
     let resource_pack_path = '';
 
-    if (win10Exists)
+    if (win10path)
     {
-        behavior_pack_path = `${behavior_packs}\\${packname}`;
+        behavior_pack_path = path.join(win10path.behavior_packs, packname);
         if (!force && fs.existsSync(behavior_pack_path))
         {
-            console.error(`behavior pack ${packname} exists already.`);
+            console.error(lang.msg.behaviorPackAlreadyExists.format(packname));
             return;
         }
     }
     else
     {
-        behavior_pack_path = 'behavior_pack';
+        behavior_pack_path = 'behavior_pack_link';
     }
 
     if (!force && fs.existsSync(packname))
     {
-        console.error(`${packname} directory exists already.`);
+        console.error(lang.msg.projectAlreadyExists.format(packname));
         return;
     }
 
-
     useResourcePack = await questions.select(
-        '(1/3) Resource pack>',
+        lang.questions.useResourcePack.text,
         useResourcePack,
-        'No Resource Pack',
-        'Generate Resource Pack',
-        'Generate Resource Pack with UI'
+        lang.useResourcePack.no.text,
+        lang.useResourcePack.yes.text,
+        lang.useResourcePack.yes_ui.text
     );
     const useUI = useResourcePack === 2;
 
     if (useResourcePack)
     {
-        if (win10Exists)
+        if (win10path)
         {
-            resource_pack_path = `${resource_packs}\\${packname}`;
+            resource_pack_path = path.join(win10path.resource_packs, packname);
             if (!force && fs.existsSync(resource_pack_path))
             {
-                console.error(`resource pack ${packname} exists already.`);
+                console.error(lang.msg.resourcePackAlreadyExists.format(packname));
                 return;
             }
         }
         else
         {
-            resource_pack_path = 'resource_pack';
+            resource_pack_path = 'resource_pack_link';
         }
     }
 
     useJavascript = await questions.select(
-        '(2/3) Please select language>',
+        lang.questions.useJavascript.text,
         useJavascript,
-        'TypeScript(Recommended)',
-        'JavaScript'
+        lang.useJavascript.no.text,
+        lang.useJavascript.yes.text
     );
 
     const ext = useJavascript ? 'js' : 'ts';
     
     useClientScript = await questions.select(
-        '(3/3) Please select target>',
+        lang.questions.useClientScript.text,
         useClientScript,
-        'Server Script Only',
-        'Server Script + Client Script'
+        lang.useClientScript.no.text,
+        lang.useClientScript.yes.text
     );
     
     mkdir(packname);
     process.chdir(packname);
     mkdir('.vscode');
 
-    if (win10Exists)
+    if (win10path)
     {
         if (useResourcePack)
         {
@@ -375,50 +241,65 @@ async function main():Promise<void>
         if (useResourcePack) mkdir("resource_pack_link");
     }
 
-    const files = path.join(path.join(__dirname, `../files/`));
-    
-    fs.copyFileSync(path.join(files, 'tsconfig.json'), `tsconfig.json`);
-    fs.copyFileSync(path.join(files, 'gitignore'), `.gitignore`);
+    const source_path = path.join(path.join(__dirname, `../files/`));
 
-    templateCopy(path.join(files, 'package.json'), `package.json`, {
+    const templateVariables = {
         javascript:useJavascript,
         client:useClientScript,
-    });
-    
-    templateCopy(path.join(files, `webpack.config.js`), `webpack.config.js`, {
-        javascript:useJavascript,
-        client:useClientScript,
+        rp:useResourcePack,
+        ui:useUI,
         ext:ext,
-    });
-    
-    templateCopy(path.join(files, 'tasks.json'), `.vscode/tasks.json`, {
         name:packname,
-    });
-    const bp_uuid = generateUuid();
-    const rp_uuid = generateUuid();
-    fs.copyFileSync(path.join(files, 'pack_icon.png'), `behavior_pack_link/pack_icon.png`);
-    templateCopy(path.join(files, 'behavior_pack/manifest.json'), `behavior_pack_link/manifest.json`, {
-        name:packname,
-        rp_uuid,
-        bp_uuid,
+        rp_uuid:generateUuid(),
+        bp_uuid:generateUuid(),
+        rp_path:behavior_pack_path,
+        bp_path:resource_pack_path,
         data_uuid:generateUuid(),
         client_data_uuid:generateUuid(),
-        javascript:useJavascript,
-        client:useClientScript,
-        rp:useResourcePack
-    });
+        resources_uuid:generateUuid(),
+        lang
+    };
+
+    function copy(src:string, dest?:string):void
+    {
+        if (!dest) dest = src;
+        src = path.join(source_path, src);
+        try
+        {
+            fs.copyFileSync(getLocaledFile(src), dest);
+        }
+        catch (err)
+        {
+            console.error(lang.msg.copyFailed.format(dest, err.message));
+        }
+    }
+    
+    function tcopy(src:string, dest?:string):void
+    {
+        if (!dest) dest = src;
+        src = path.join(source_path, src);
+        try
+        {
+            templateCopy(getLocaledFile(src), dest, templateVariables);
+        }
+        catch (err)
+        {
+            console.error(lang.msg.copyFailed.format(dest, err.message));
+        }
+    }
+
+    copy('tsconfig.json');
+    copy('gitignore', '.gitignore');
+    tcopy('package.json');
+    tcopy('webpack.config.js');
+    tcopy('tasks.json', '.vscode/tasks.json');
+
+    copy('pack_icon.png', 'behavior_pack_link/pack_icon.png');
+    tcopy('behavior_pack/manifest.json', 'behavior_pack_link/manifest.json');
     if (useResourcePack)
     {
-        fs.copyFileSync(path.join(files, 'pack_icon.png'), `resource_pack_link/pack_icon.png`);
-        templateCopy(path.join(files, 'resource_pack/manifest.json'), `resource_pack_link/manifest.json`, {
-            name:packname,
-            rp_uuid,
-            bp_uuid,
-            resources_uuid:generateUuid(),
-            javascript:ext === 'js',
-            client:useClientScript,
-            ui:useUI
-        });
+        copy('pack_icon.png', 'resource_pack_link/pack_icon.png');
+        tcopy('resource_pack/manifest.json', 'resource_pack_link/manifest.json');
     }
     
     mkdir('src');
@@ -427,33 +308,22 @@ async function main():Promise<void>
     if (useClientScript)
     {
         mkdir('src/client');
-        templateCopy(path.join(files, `client/index.${ext}`), `src/client/index.${ext}`,{
-            ui:useUI,
-            client:useClientScript,
-        });
+        tcopy(`client/index.${ext}`, `src/client/index.${ext}`);
     }
 
     if (useResourcePack && useUI)
     {
-        await new Promise((resolve, reject)=>{
-            ncp(path.join(files, 'experimental_ui'), 'resource_pack_link/experimental_ui', err=>{
-                if (err) reject(err);
-                else resolve();
-            });
-        });
+        await copyAll(path.join(source_path, 'experimental_ui'), 'resource_pack_link/experimental_ui');
     }
 
-    templateCopy(path.join(files, `server/index.${ext}`), `src/server/index.${ext}`,{
-        ui:useUI,
-        client:useClientScript,
-    });
-    fs.copyFileSync(path.join(files, 'README.md'), 'README.md');
+    tcopy(`server/index.${ext}`, `src/server/index.${ext}`);
+    tcopy("README.md", 'README.md');
     
-    console.log(`generating...`);
+    console.log(lang.msg.generating.text);
     cp.execSync(`npm install`, {stdio:'inherit'});
-    console.log('Project Path:  '+process.cwd());
-    if (behavior_pack_path) console.log('Behavior Pack: '+behavior_pack_path);
-    if (resource_pack_path) console.log('Resource Pack: '+resource_pack_path);
+    console.log(lang.msg.projectPath + process.cwd());
+    if (behavior_pack_path) console.log(lang.msg.behaviorPath + behavior_pack_path);
+    if (resource_pack_path) console.log(lang.msg.resourcePath + resource_pack_path);
 
     cp.exec('code .', err=>{});
 }

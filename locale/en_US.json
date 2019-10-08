@@ -1,0 +1,63 @@
+{
+    "questions":{
+        "useResourcePack": "(1/3) Resource pack>",
+        "useJavascript": "(2/3) Please select language>",
+        "useClientScript": "(3/3) Please select target>"
+    },
+    "useResourcePack":{
+        "no": "No Resource Pack",
+        "yes": "Generate Resource Pack",
+        "yes_ui": "Generate Resource Pack with UI"
+    },
+    "useClientScript":{
+        "no": "Server Script Only",
+        "yes": "Server Script + Client Script"
+    },
+    "useJavascript":{
+        "no": "TypeScript(Recommended)",
+        "yes": "JavaScript"
+    },
+    "msg":{
+        "win10": {
+            "no": "Minecraft Windows 10 Edition not found\nIt will generate project directory only",
+            "yes": "It will generate project directory and behavior pack"
+        },
+        "putProjectName": "Please enter name of project>",
+        "invalidFileName": "Invalid file name: $",
+        "projectAlreadyExists": "$ directory exists already.",
+        "behaviorPackAlreadyExists": "behavior pack $ exists already.",
+        "resourcePackAlreadyExists": "resource pack $ exists already.",
+        "copyFailed": "failed to copy $0: $1",
+        "generating": "generating...",
+        "projectPath": "Project Path:  ",
+        "behaviorPath": "Behavior Pack: ",
+        "resourcePath": "Resource Pack: "
+    },
+    "script":{
+        "nothingExport": "nothing, avoid to use global scope without import anything",
+        "function":{
+            "message": {
+                "desc": "Display message function",
+                "param":{
+                    "msg": "Message to display"
+                }
+            }
+        },
+        "hit_result_changed": "event on hit result changed",
+        "hit_result_changed_msg": "display message with entity identifier",
+        "entity_created": "event on entity created",
+        "entity_created_msg": "display message with entity identifier"
+    },
+    "zip":{
+        "noPath":"It needs a zip path"
+    },
+    "remove":{
+        "win10No": "Minecraft Windows 10 Edition not found",
+        "select":"Select to remove>",
+        "behaviorPack": "(behavior)",
+        "resourcePack": "(resource)",
+        "exit": "exit",
+        "succeeded": "$ is removed",
+        "failed": "$ removing failed"
+    }
+}

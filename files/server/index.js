@@ -3,8 +3,8 @@
 const system = server.registerSystem(0, 0);
 
 /**
- * Display message function
- * @param {string} msg Message to display
+ * {{lang.script.function.message.desc}}
+ * @param {string} msg {{lang.script.function.message.param.msg}}
  */
 function message(msg)
 {
@@ -14,9 +14,9 @@ function message(msg)
     system.broadcastEvent("minecraft:display_chat_event", chat);
 }
 
-// event on entity created
+// {{lang.script.entity_created}}
 system.listenForEvent("minecraft:entity_created", (data)=>{
     const entity = data.data.entity;
-    message('EntityCreated: '+entity.__identifier__); // display message with entity identifier
+    message('EntityCreated: '+entity.__identifier__); // {{entity_created_msg}}
 });
 

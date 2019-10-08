@@ -1,12 +1,12 @@
 /// <reference types="minecraft-scripting-types-client" />
 
-export {}; // nothing, avoid to use global scope without import anything
+export {}; // {{lang.script.nothingExport}}
 
 const system = client.registerSystem(0, 0);
 
 /**
- * Display message function
- * @param msg Message to display
+ * {{lang.script.function.message.desc}}
+ * @param msg {{lang.script.function.message.param.msg}}
  */
 function message(msg:string):void
 {
@@ -16,11 +16,11 @@ function message(msg:string):void
     system.broadcastEvent(SendToMinecraftClient.DisplayChat, chat);
 }
 
-// event on hit result changed
+// {{lang.script.hit_result_changed}}
 system.listenForEvent(ReceiveFromMinecraftClient.HitResultChanged, (data)=>{
     const entity = data.data.entity;
     if (!entity) return;
-    message('EntityHitResult: '+entity.__identifier__); // display message with entity identifier
+    message('EntityHitResult: '+entity.__identifier__); // {{lang.script.hit_result_changed_msg}}
 });
 /*<<<ui*/
 system.listenForEvent(ReceiveFromMinecraftClient.UIEvent, ev=>{

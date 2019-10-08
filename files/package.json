@@ -1,9 +1,12 @@
 {
-    "name": "{{packname}}",
+    "name": "{{name}}",
     "version": "0.0.1",
-    "description": "{{packname}} package description",
+    "description": "{{name}}: Minecraft Bedrock Addon",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "build": "./node_modules/.bin/webpack",
+      "watch": "./node_modules/.bin/webpack --info-verbosity verbose -w",
+      "zip": "./node_modules/.bin/webpack && mcaddon-start zip behavior_pack_link \"dist/{{name}}.mcaddon\""
     },
     "keywords": [],
     "author": "",
