@@ -18,8 +18,9 @@
             "group": "build"
         },
         {
-            "label": "Build & Zip to .mcaddon",
-            "type": "npm",
+            /*<<<!rp*/"label": "Build & Zip to .mcpack",
+            /*>>>*//*<<<rp*/"label": "Build & Zip to .mcaddon",
+            /*>>>*/"type": "npm",
             "script": "zip",
             "problemMatcher":"$ts-webpack",
             "group": "build"

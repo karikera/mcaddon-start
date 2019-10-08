@@ -3,10 +3,12 @@
     "version": "0.0.1",
     "description": "{{name}}: Minecraft Bedrock Addon",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1",
       "build": "./node_modules/.bin/webpack",
       "watch": "./node_modules/.bin/webpack --info-verbosity verbose -w",
-      "zip": "./node_modules/.bin/webpack && mcaddon-start zip behavior_pack_link \"dist/{{name}}.mcaddon\""
+      /*<<<!rp*/ "zip": "./node_modules/.bin/webpack && mcaddon-start zip behavior_pack_link \"dist/{{name}}.mcpack\"",
+      /*>>>*//*<<<rp*/ "zip": "./node_modules/.bin/webpack && mcaddon-start zip behavior_pack_link \"dist/pack/{{name}}_bp.mcpack\" && mcaddon-start zip resource_pack_link \"dist/pack/{{name}}_rp.mcpack\" && mcaddon-start zip dist/pack \"dist/{{name}}.mcaddon\"",
+      /*>>>*/
+      "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
     "author": "",
