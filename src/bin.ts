@@ -9,7 +9,9 @@ import validFilename = require('valid-filename');
 import generateUuid = require('uuid/v1');
 import rimraf = require('rimraf');
 import { Questions } from './questions';
-import AdmZip = require('adm-zip');
+
+type AdmZip = import('adm-zip');
+const AdmZip:{new():AdmZip} = require('adm-zip-fixcrc');
 import { mkdir, mkdirr, getStdLine, templateCopy, copyAll } from './util';
 import { lang, getLocaledFile } from './lang';
 
