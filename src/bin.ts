@@ -6,7 +6,7 @@ import fs = require('fs');
 import cp = require('child_process');
 import path = require('path');
 import validFilename = require('valid-filename');
-import generateUuid = require('uuid/v1');
+import generateUuid = require('uuid/v4');
 import rimraf = require('rimraf');
 import { Questions } from './questions';
 
