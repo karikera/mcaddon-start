@@ -16,7 +16,7 @@ import openFileExplorer = require('open-file-explorer');
 type AdmZip = import('adm-zip');
 const AdmZip:{new():AdmZip} = require('adm-zip-fixcrc');
 import { mkdir, mkdirr, getStdLine, templateCopy, copyAll } from './util';
-import { lang, getLocaledFile } from './lang';
+import { lang, getLocaledFile, getSelectedLocale } from './lang';
 
 const questions = new Questions;
 
@@ -37,6 +37,9 @@ async function main():Promise<void>
     const win10path = getMinePath();
     switch (process.argv[2])
     {
+    case '--locale':
+        console.log(getSelectedLocale());
+        return;
     case 'zip':
         console.error(lang.zip.deprecated.text);
     case '--zip':
@@ -83,16 +86,6 @@ async function main():Promise<void>
         return;
     }
 
-    if (!win10path)
-    {
-        console.log(lang.msg.win10.no.text);
-    }
-    else
-    {
-        console.log(lang.msg.win10.yes.text);
-    }
-    console.log(''); // empty line
-    
     let useClientScript:number|null = null;
     let useResourcePack:number|null = null;
     let useJavascript:number|null = null;
@@ -131,7 +124,7 @@ async function main():Promise<void>
     }
     if (!packname)
     {
-        console.log(lang.msg.putProjectName);
+        console.log(lang.msg.putProjectName.text);
         packname = await getStdLine();
     }
 
@@ -164,6 +157,16 @@ async function main():Promise<void>
         return;
     }
 
+    if (!win10path)
+    {
+        console.log(lang.msg.win10.no.text);
+    }
+    else
+    {
+        console.log(lang.msg.win10.yes.text);
+    }
+    console.log(''); // empty line
+    
     useResourcePack = await questions.select(
         lang.questions.useResourcePack.text,
         useResourcePack,

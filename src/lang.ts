@@ -1,11 +1,11 @@
 
 import fs = require('fs');
 import path = require('path');
+import osLocale = require('os-locale');
 
 function getEnvLocale():string
 {
-    const env = process.env;
-    const locale = env.LC_ALL || env.LC_MESSAGES || env.LANG || env.LANGUAGE;
+    const locale = osLocale.sync();
     if (locale)
     {
         const idx = locale.indexOf('.');
@@ -135,4 +135,9 @@ export function getLocaledFile(file:string):string
     {
         return file;
     }
+}
+
+export function getSelectedLocale():string
+{
+    return locale;
 }
