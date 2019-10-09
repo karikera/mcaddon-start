@@ -33,6 +33,7 @@
         "no-debugger":"off",
         "no-case-declarations":"off",
         "no-empty":"off",
-        "no-inner-declarations":"off"
+        "no-inner-declarations":"off",
+        "no-fallthrough":"off"
     }
 }

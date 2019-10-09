@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/// <reference path="open-file-explorer.d.ts" />
+
 require('source-map-support').install();
 import os = require('os');
 import fs = require('fs');
@@ -7,8 +9,9 @@ import cp = require('child_process');
 import path = require('path');
 import validFilename = require('valid-filename');
 import generateUuid = require('uuid/v4');
-import rimraf = require('rimraf');
 import { Questions } from './questions';
+
+import openFileExplorer = require('open-file-explorer');
 
 type AdmZip = import('adm-zip');
 const AdmZip:{new():AdmZip} = require('adm-zip-fixcrc');
@@ -32,8 +35,11 @@ function getMinePath():{behavior_packs:string, resource_packs:string}|null
 async function main():Promise<void>
 {
     const win10path = getMinePath();
-    if (process.argv[2] === 'zip')
+    switch (process.argv[2])
     {
+    case 'zip':
+        console.error(lang.zip.deprecated.text);
+    case '--zip':
         const src = process.argv[3];
         const dest = process.argv[4];
         if (!src || !dest)
@@ -48,43 +54,32 @@ async function main():Promise<void>
         zip.addLocalFolder(src);
         zip.writeZip(dest);
         return;
-    }
-    else if (process.argv[2] === 'remove')
-    {
+    case 'remove':
+        console.error(lang.remove.deleted.text);
+        return;
+    case '--open-rp':
         if (!win10path)
         {
-            console.error(lang.remove.win10No);
+            console.error(lang.open.win10No.text);
             return;
         }
-        for (;;)
+        openFileExplorer(win10path.resource_packs, err=>{
+            if (!err) return;
+            console.error('Error: '+ err.message);
+            console.log('Resource Pack Path: ' + win10path.resource_packs);
+        });
+        return;
+    case '--open-bp':
+        if (!win10path)
         {
-            const bps = fs.readdirSync(win10path.behavior_packs).map(v=>lang.remove.behaviorPack + v);
-            const rps = fs.readdirSync(win10path.resource_packs).map(v=>lang.remove.resourcePack + v);
-            const files = bps.concat(rps).concat([lang.remove.exit.text]);
-
-            const selected = await questions.select(lang.remove.select.text, null, ...files);
-            if (selected >= bps.length + rps.length) break;
-            const file = files[selected];
-            try
-            {
-                if (selected >= bps.length)
-                {
-                    const dirname = file.substr(lang.remove.behaviorPack.text.length);
-                    rimraf.sync(path.join(win10path.behavior_packs, dirname));
-                }
-                else
-                {
-                    const dirname = file.substr(lang.remove.resourcePack.text.length);
-                    rimraf.sync(path.join(win10path.resource_packs, dirname));
-                }
-                console.log(lang.remove.succeeded.format(file));
-            }
-            catch (err)
-            {
-                console.error(lang.remove.failed.format(file));
-                console.error(err.message);
-            }
+            console.error(lang.open.win10No.text);
+            return;
         }
+        openFileExplorer(win10path.behavior_packs, err=>{
+            if (!err) return;
+            console.error('Error: '+ err.message);
+            console.log('Behavior Pack Path: ' + win10path.behavior_packs);
+        });
         return;
     }
 

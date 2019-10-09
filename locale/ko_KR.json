@@ -49,15 +49,13 @@
         "entity_created_msg": "엔티티 식별자 출력"
     },
     "zip":{
+        "deprecated": "zip 명령어는 없어질 예정이에요. 대신 --zip 명령어를 이용해주세요",
         "noPath":"압축 파일 위치를 적어주셔야합니다"
     },
+    "open":{
+        "win10No": "마인크래프트 윈10 에디션을 찾지 못했습니다"
+    },
     "remove":{
-        "win10No": "마인크래프트 윈10 에디션을 찾지 못했습니다",
-        "select":"삭제할 팩>",
-        "behaviorPack": " (행동팩) ",
-        "resourcePack": "(리소스팩)",
-        "exit": "나가기",
-        "succeeded": "$: 삭제 성공",
-        "failed": "$: 삭제 실패"
+        "deleted": "remove 명령어는 더 이상 지원되지 않습니다.\n대신 --open-bp나 --open-rp를 이용하주세요"
     }
 }

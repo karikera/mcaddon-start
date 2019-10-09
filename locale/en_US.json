@@ -49,15 +49,13 @@
         "entity_created_msg": "display message with entity identifier"
     },
     "zip":{
+        "deprecated": "zip command is deprecated. Please use --zip instead",
         "noPath":"It needs a zip path"
     },
+    "open":{
+        "win10No": "Minecraft Windows 10 Edition not found"
+    },
     "remove":{
-        "win10No": "Minecraft Windows 10 Edition not found",
-        "select":"Select to remove>",
-        "behaviorPack": "(behavior)",
-        "resourcePack": "(resource)",
-        "exit": "exit",
-        "succeeded": "$ is removed",
-        "failed": "$ removing failed"
+        "deleted": "remove command is not supported anymore\nPlease use --open-bp or --open-rp"
     }
 }
