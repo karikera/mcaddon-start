@@ -1,6 +1,6 @@
 {
   "name": "mcaddon-start",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Minecraft Addon Project Generator with Webpack + Typescript",
   "bin": "bin/bin.js",
   "scripts": {
